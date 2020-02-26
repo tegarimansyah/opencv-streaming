@@ -1,0 +1,11 @@
+Click==7.0
+fastapi==0.49.0
+h11==0.9.0
+httptools==0.1.1
+numpy==1.18.1
+opencv-contrib-python-headless==4.2.0.32
+pydantic==1.4
+starlette==0.12.9
+uvicorn==0.11.3
+uvloop==0.14.0
+websockets==8.1

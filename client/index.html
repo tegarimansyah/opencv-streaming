@@ -1,0 +1,51 @@
+<!-- 
+    Credit for html file to: Alex Cambose
+    with some adjustment by @tegarimansyah
+    Read his article https://medium.com/@alexcambose/webcam-live-streaming-with-websockets-and-base64-64b1b4992db8
+ -->
+
+<html>
+<head>
+    <title>Streamer</title>
+</head>
+<body>
+    <video autoplay></video>
+    <img src="">
+    <script>
+        // get video dom element
+        const video = document.querySelector('video');
+        
+        // get img dom element
+        const img = document.querySelector('img');
+        
+        // request access to webcam
+        navigator.mediaDevices.getUserMedia({video: {width: 426, height: 240}}).then((stream) => video.srcObject = stream);
+        
+        // returns a frame encoded in base64
+        const getFrame = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            const data = canvas.toDataURL('image/png');
+            return data;
+        }
+
+        const WS_URL = 'ws://localhost:8000/ws'; // Change this if you serve on different server or port
+        const FPS = 3;
+        const ws = new WebSocket(WS_URL);
+
+        ws.onopen = () => {
+            console.log(`Connected to ${WS_URL}`);
+            setInterval(() => {
+                ws.send(getFrame());
+            }, 1000 / FPS);
+        }
+
+        ws.onmessage = message => {
+            // set the base64 string to the src tag of the image
+            img.src = message.data;
+        }
+    </script>
+</body>
+</html>
